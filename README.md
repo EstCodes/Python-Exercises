@@ -1,2 +1,3 @@
 # Python-Exercises
-Python exercises for everybody who wants to learn Python.
+Hello, I'm Esteban Raigoza.
+Here are some python projects and Exercises I'ive done
