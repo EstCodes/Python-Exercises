@@ -6,19 +6,36 @@ class GenPassword:
         self.keynumbers = keynumbers
 
     def getKeyword(self) -> None:
-        print("To execute this program you should enter a keyword to remember the password")
-        self.keyword = input("Type here: ")
-        print(f"Keyword set to: {self.keyword}")
+        print("""Hello, this is a Secure and local program created by Esteban
+To execute this program you should enter a keyword, this is to remember the associate and remember each password.""")
+
+        print("-----------------------------------------------------")
+
+        state = True 
+
+        while state:
+            print("Consider these factors to have a strong password: Length and characters. More characters/length better.")
+            self.keyword = input("Type here: ")
+
+            if not isinstance(self.keyword, str) or len(self.keyword) < 3 or len(self.keyword) > 20:
+                print("The keyword must be a string and have a length of at least 6 characters. Please try again.")
+            else:
+                print(f"Keyword set to: {self.keyword}, successfully.")
+                state = False
 
     def getKeynumbers(self) -> None:
-        print("To execute this program you should enter a keynumber to remember the password")
-        while True:
+        print("To execute this program you should enter a keynumber to remember the password.")
+
+        state2 = True
+
+        while state2:
             try:
                 self.keynumbers = int(input("Type here: "))
                 print(f"Keynumber set to: {self.keynumbers}")
-                break 
+                state2 = False
             except ValueError:
-                print("Invalid input. Please enter a valid integer.")
+                print("The keynumber must be an integer. Please try again.")
+                
 
     def generatePass(self) -> str:
         if not self.keyword:
@@ -35,7 +52,7 @@ class GenPassword:
             else:
                 password[index] = char.lower()
             
-        symbols = ['#', '@', '!', '-', '_', '=', '+', ']', '[', '{', '}', '.', ',', '~', '$', '%', '&', ':', ';']
+        symbols = ['#', '@', '!', '-', '_', '=', '+', ']', '[', '{', '}', '.', ',', '~', '$', '%', '&', ':', ';', '?', '^']
         selected_symbols = random.sample(symbols, 3)
 
         password.extend(selected_symbols)
@@ -44,6 +61,11 @@ class GenPassword:
         if len(password) > 0:
             insert_index = random.choice(range(len(password) + 1))
             password.insert(insert_index, str(self.keynumbers))
+
+            newCodeGen = random.sample(range(9, 50), k=5)
+            # Convert numbers to strings and add them to the end of the password list
+            password.extend([str(num) for num in newCodeGen])
+
         final_password = "".join(password)
         return final_password
     
