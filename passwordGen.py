@@ -76,82 +76,81 @@ To execute this program you should enter a keyword, this is to remember the asso
     def getStorage(self, label, entry_id, password, filename="passwords.json"):
         print("""This step is not mandatory. Do you want to save your password on a local file?
 This is actually much easier option than save your passwords on the cloud...""")
-        
-        optionConfirm = input("Type y/n (Yes or No): ")
-
+    
+        optionConfirm = input("Type y/n (Yes or No): ").strip().lower()
         state3 = True
+        activation = False  # Initialize this here
 
         while state3:
-            if optionConfirm == "y" or optionConfirm == "yes":
-                print("Alright so lets continue with the process.")
+            if optionConfirm in ["y", "yes"]:
+                print("Alright, so let's continue with the process.")
                 print("-----------------------------------")
-                print("You have a storage file?")
+                print("Do you already have a storage file?")
 
-                optionConFile = input("Type y/n (Yes or No): ")
-
+                optionConFile = input("Type y/n (Yes or No): ").strip().lower()
                 state4 = True
 
                 while state4:
-                    if optionConFile == "y" or optionConFile == "yes" or activation == True:
-                        print("Okay lets find where is your file...")
+                    if optionConFile in ["y", "yes"] or activation:
+                        print("Okay, let's find your file...")
 
+                        # Load file or initialize data
                         if os.path.exists(filename):
                             with open(filename, "r") as file:
                                 try:
                                     data = json.load(file)
                                 except json.JSONDecodeError:
                                     data = {}
-
                         else:
                             data = {}
 
+                        # Ask for entry details
+                        passId = input(f"The following password: {password}, corresponds to which Site or App? (This is to identify): ")
+                        date = datetime.now().isoformat()
+
+                        # Add new entry
                         entry = {
                             "passID": passId,
-                            "password": generate_pwd,
+                            "entryID": entry_id,
+                            "password": password,
                             "date": date
                         }
 
+
                         data[label] = entry
 
+                        # Save to file
                         with open(filename, "w") as file:
-                            json.dump(data, file, indent=4)                        
+                            json.dump(data, file, indent=4)
 
-                        state4 = False 
-
-                    elif optionConFile == 'n' or optionConFile == 'no':
-                        print("Its okay we can create a new one from scratch.")
-                        # Funcion para crear un archivo
-
-                        empty_data = {}
-
-                        with open("passwords.json", "w") as file:
-                            json.dump(empty_data, file, indent=4)
-
-                        print("Empty passwords.json file created.")
-                        
-                        activation = True
+                        print(f"Password saved successfully to '{filename}'.")
                         state4 = False
 
-                        # Debo conectar esto con lo otro de arriba para continuar con el proceso correctamente...
+                    elif optionConFile in ["n", "no"]:
+                        print("It's okay, we can create a new one from scratch.")
+                        # Create empty file
+                        with open(filename, "w") as file:
+                            json.dump({}, file, indent=4)
+                        print(f"Empty '{filename}' file created.")
+
+                        # Activate flow to continue with saving
+                        activation = True
+                        optionConFile = "y"  # Force next loop to write
+                        # Do not set state4 = False here — allow next loop to continue
 
                     else:
-                        print("Sorry but your response doesnt match with none of our options, try again.")
+                        print("Sorry, your response doesn't match any of our options. Try again.")
+                        optionConFile = input("Type y/n (Yes or No): ").strip().lower()
 
+                state3 = False  # Exit main loop
 
-                passId = input(f"The following password: {generate_pwd}, corresponds to which Site or App? (This is to identify): ")
-                date = datetime.now().isoformat()
-                
-                # Aqui se debe recopilar passID, Passwd, Date, Versions
-
-
-
+            elif optionConfirm in ["n", "no"]:
+                print("Thanks for your response. No password will be stored.")
                 state3 = False
-                
-            elif optionConfirm == "n" or optionConfirm == "no":
-                print("Thanks for your response. ")
-                state3 = False
+
             else:
-                print("Somethings wrong with your answer... please type y/n to confirm.")
+                print("Something’s wrong with your answer... please type y/n to confirm.")
+                optionConfirm = input("Type y/n (Yes or No): ").strip().lower()
     
 if __name__ == "__main__":
     password_gen = GenPassword()
@@ -162,8 +161,10 @@ if __name__ == "__main__":
     generate_pwd = password_gen.generatePass()
     print(f"Generated Password: {generate_pwd}")
 
-    password_gen.getStorage()
+    label = input("Enter a label to identify this password (e.g., 'email', 'bank'): ")
+    entry_id = input("Enter an ID for this password entry (or just press enter to skip): ") or "N/A"
 
+    password_gen.getStorage(label=label, entry_id=entry_id, password=generate_pwd)
 
 
 
