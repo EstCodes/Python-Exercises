@@ -104,11 +104,9 @@ This is actually much easier option than save your passwords on the cloud...""")
                         else:
                             data = {}
 
-                        # Ask for entry details
                         passId = input(f"The following password: {password}, corresponds to which Site or App? (This is to identify): ")
                         date = datetime.now().isoformat()
 
-                        # Add new entry
                         entry = {
                             "passID": passId,
                             "entryID": entry_id,
@@ -136,7 +134,6 @@ This is actually much easier option than save your passwords on the cloud...""")
                         # Activate flow to continue with saving
                         activation = True
                         optionConFile = "y"  # Force next loop to write
-                        # Do not set state4 = False here — allow next loop to continue
 
                     else:
                         print("Sorry, your response doesn't match any of our options. Try again.")
